@@ -1,0 +1,4 @@
+package: github.com/yuniersoad/hangman-pharse-service
+import:
+  - package: github.com/pressly/chi
+
