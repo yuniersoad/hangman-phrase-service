@@ -1,6 +1,15 @@
-hash: e929f029fbdefb19f4cf10485739b979b9585fd1c15372819f5f11e5ff3aa2b3
-updated: 2017-04-01T20:27:12.602987791-05:00
+hash: f4ea6fe014d0cdb782ee450df7315a803f52c40ce63e9103ba380178e7704d5b
+updated: 2017-04-14T16:24:06.990288587-05:00
 imports:
 - name: github.com/pressly/chi
   version: e6033ea75479391a4bce3918fc119cad31e1cb30
+  subpackages:
+  - middleware
+- name: gopkg.in/mgo.v2
+  version: 3f83fa5005286a7fe593b055f0d7771a7dce4655
+  subpackages:
+  - bson
+  - internal/json
+  - internal/sasl
+  - internal/scram
 testImports: []

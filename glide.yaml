@@ -1,4 +1,5 @@
-package: github.com/yuniersoad/hangman-pharse-service
+package: github.com/yuniersoad/hangman-phrase-service
 import:
   - package: github.com/pressly/chi
+  - package: gopkg.in/mgo.v2
 

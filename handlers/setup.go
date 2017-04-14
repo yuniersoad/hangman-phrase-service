@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/pressly/chi"
 	"github.com/pressly/chi/middleware"
+	"github.com/yuniersoad/hangman-phrase-service/storage"
 	"net/http"
 )
 
@@ -14,5 +15,11 @@ func init() {
 }
 
 func GetRandomPhrase(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("al que madruga dios lo ayuda"))
+	phrase, err := storage.GetRandom()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write([]byte(phrase))
 }
