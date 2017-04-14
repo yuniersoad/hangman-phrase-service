@@ -1,12 +1,21 @@
 FROM golang:1.8-alpine
 
-ADD . /go/src/github.com/yuniersoad/hangman-phrase-service
+ENV target_dir /go/src/github.com/yuniersoad/hangman-phrase-service
+
+RUN mkdir -p $target_dir
+
+COPY ./glide.yaml $target_dir
+COPY ./glide.lock $target_dir
 
 RUN apk add --no-cache --virtual .build-deps glide git \
-  && cd /go/src/github.com/yuniersoad/hangman-phrase-service \
+  && cd $target_dir \
   && glide install \
-  && go install github.com/yuniersoad/hangman-phrase-service \
   && apk del .build-deps
+
+COPY . $target_dir
+
+RUN cd $target_dir \
+  && go install 
 
 ENTRYPOINT /go/bin/hangman-phrase-service
 
