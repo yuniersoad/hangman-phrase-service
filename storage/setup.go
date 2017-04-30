@@ -6,6 +6,7 @@ import (
 )
 
 type Phrase struct {
+	ID   bson.ObjectId `bson:"_id,omitempty"`
 	Text string
 }
 
@@ -46,4 +47,16 @@ func GetRandom() (string, error) {
 		return "", err
 	}
 	return result.Text, nil
+}
+
+func GetAll() ([]Phrase, error) {
+	s := Session.New()
+	defer s.Close()
+	c := s.DB("phrase_service").C("phrases")
+	var result []Phrase
+	err := c.Find(bson.M{}).All(&result)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
 }
