@@ -21,9 +21,9 @@ func Setup(dbServer string) error {
 		return err
 	}
 	Session.SetMode(mgo.Monotonic, true)
-	s := Session.New()
+	c, s := getCollection()
 	defer s.Close()
-	c := s.DB("phrase_service").C("phrases")
+
 	count, err := c.Count()
 	if err != nil {
 		return err
@@ -38,9 +38,8 @@ func Setup(dbServer string) error {
 }
 
 func GetRandom() (string, error) {
-	s := Session.New()
+	c, s := getCollection()
 	defer s.Close()
-	c := s.DB("phrase_service").C("phrases")
 	result := Phrase{}
 	err := c.Find(bson.M{}).One(&result)
 	if err != nil {
@@ -50,13 +49,20 @@ func GetRandom() (string, error) {
 }
 
 func GetAll() ([]Phrase, error) {
-	s := Session.New()
+	c, s := getCollection()
 	defer s.Close()
-	c := s.DB("phrase_service").C("phrases")
 	var result []Phrase
 	err := c.Find(bson.M{}).All(&result)
-	if err != nil {
-		return result, err
-	}
-	return result, nil
+	return result, err
+}
+
+func Add(text string) error {
+	c, s := getCollection()
+	defer s.Close()
+	return c.Insert(&Phrase{Text: text})
+}
+
+func getCollection() (*mgo.Collection, *mgo.Session) {
+	s := Session.New()
+	return s.DB("phrase_service").C("phrases"), s
 }

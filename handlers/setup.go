@@ -13,6 +13,7 @@ func init() {
 	r.Use(middleware.Logger)
 	r.Get("/phrases/random", GetRandomPhrase)
 	r.Get("/phrases", GetPhrases)
+	r.Post("/phrases", AddPhrase)
 	http.Handle("/", r)
 }
 
@@ -37,4 +38,19 @@ func GetPhrases(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
 	encoder.Encode(phrases)
+}
+
+func AddPhrase(w http.ResponseWriter, r *http.Request) {
+	text := r.FormValue("text")
+	if text == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err := storage.Add(text)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
 }
