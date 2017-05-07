@@ -5,6 +5,10 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+var (
+	ErrNotFound = mgo.ErrNotFound
+)
+
 type Phrase struct {
 	ID   bson.ObjectId `bson:"_id,omitempty"`
 	Text string
@@ -60,6 +64,16 @@ func Add(text string) error {
 	c, s := getCollection()
 	defer s.Close()
 	return c.Insert(&Phrase{Text: text})
+}
+
+func Delete(id string) error {
+	if !(bson.IsObjectIdHex(id)){
+		return mgo.ErrNotFound
+	}
+
+	c, s := getCollection()
+	defer s.Close()
+	return c.RemoveId(bson.ObjectIdHex(id))
 }
 
 func getCollection() (*mgo.Collection, *mgo.Session) {

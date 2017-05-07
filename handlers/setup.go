@@ -14,6 +14,7 @@ func init() {
 	r.Get("/phrases/random", GetRandomPhrase)
 	r.Get("/phrases", GetPhrases)
 	r.Post("/phrases", AddPhrase)
+	r.Delete("/phrases/:id", DeletePhrase)
 	http.Handle("/", r)
 }
 
@@ -54,3 +55,19 @@ func AddPhrase(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 }
+
+func DeletePhrase(w http.ResponseWriter, r *http.Request){
+  id := chi.URLParam(r, "id")
+	err := storage.Delete(id)
+	if err != nil {
+		if (err == storage.ErrNotFound){
+			w.WriteHeader(http.StatusNotFound)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
