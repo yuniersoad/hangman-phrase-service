@@ -11,10 +11,12 @@ import (
 func init() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Get("/phrases/random", GetRandomPhrase)
-	r.Get("/phrases", GetPhrases)
-	r.Post("/phrases", AddPhrase)
-	r.Delete("/phrases/:id", DeletePhrase)
+	r.Route("/phrases", func(r chi.Router) {
+		r.Get("/random", GetRandomPhrase)
+		r.Get("/", GetPhrases)
+		r.Post("/", AddPhrase)
+		r.Delete("/:id", DeletePhrase)
+	})
 	http.Handle("/", r)
 }
 
@@ -56,11 +58,11 @@ func AddPhrase(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func DeletePhrase(w http.ResponseWriter, r *http.Request){
-  id := chi.URLParam(r, "id")
+func DeletePhrase(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
 	err := storage.Delete(id)
 	if err != nil {
-		if (err == storage.ErrNotFound){
+		if err == storage.ErrNotFound {
 			w.WriteHeader(http.StatusNotFound)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -70,4 +72,3 @@ func DeletePhrase(w http.ResponseWriter, r *http.Request){
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
-
